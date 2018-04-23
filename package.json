@@ -1,0 +1,19 @@
+{
+  "name": "data-visualization",
+  "version": "1.0.0",
+  "scripts": {
+    "lite": "lite-server",
+    "start": "npm run lite"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "es6-promise": "^4.2.4",
+    "es6-shim": "^0.35.3",
+    "reflect-metadata": "0.1.12",
+    "rxjs": "5.5.10",
+    "zone.js": "0.8.26"
+  },
+  "devDependencies": {
+    "lite-server": "^2.3.0"
+  }
+}
