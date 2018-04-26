@@ -1,8 +1,3 @@
-/*
-*    main.js
-*    Mastering Data Visualization with D3.js
-*    2.5 - Activity: Adding SVGs to the screen
-*/
 
 var data = [25,20,10,5,10,20,25]
 

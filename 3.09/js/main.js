@@ -1,31 +1,37 @@
+//Definicja marginesów
+var margin = {left: 100, right: 10, top: 10, bottom: 100};
 
+//Definicja obszaru wykresu
+var width = 600 - margin.left - margin.right;
+var height = 400 - margin.top - margin.bottom;
+
+//Definicja obszaru płótna
 var svg = d3.select("#chart-area").append("svg")
-    .attr("width", 400)
-    .attr("height", 400);
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
+
+//Definicja obszaru grupy z przesunięciem od lewj i od góry
+var g = svg.append("g")
+    .attr("transform", "translate("+ margin.left +", "+ margin.top +")");
 
 d3.json("data/buildings.json").then((data) => {
     data.map(data => data.height = +data.height);
     console.log(data);
-    var buildings = [];
-    for (let item of data) { // Próba przekazywania tabeli z JSONa - w 3.07 uzyto map()
-        buildings.push(item.name);
-    }
-    console.log(buildings);
 
     //Funkcja scaleBand tworzy automatycznie wymiar(bandwith) na zadanym obszarze
     //uzwględniając padding i range, z ilości elementów podanych w domain
 
     var x = d3.scaleBand() // Definicja wartości funkcji scaleBand
-        .domain(buildings)
-        .range([0, 400])
+        .domain(data.map(d => d.name)) // Mapowanie nazw budynków z tablicy
+        .range([0, width])
         .paddingInner(0.3)
         .paddingOuter(0.3);
 
     var y = d3.scaleLinear() // Definicja wartości funkcji scaleLinear
-        .domain([0, 828])
-        .range([0, 400]);
+        .domain([0, d3.max(data, d => d.height)]) // d3.max wyciąga wartość maksymalną z tablicy
+        .range([0, height]);
 
-    var columns = svg.selectAll("rect")
+    var columns = g.selectAll("rect")
         .data(data)
         .enter()
         .append("rect")

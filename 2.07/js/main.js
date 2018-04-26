@@ -1,8 +1,3 @@
-/*
-*    main.js
-*    Mastering Data Visualization with D3.js
-*    2.5 - Activity: Adding SVGs to the screen
-*/
 
 d3.json("data/ages.json").then(function (data) {
   data.map(d => d.age = +d.age) // Konwersja typów ze stringa na number: str = +str
