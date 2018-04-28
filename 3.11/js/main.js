@@ -56,10 +56,10 @@ d3.json("data/buildings.json").then((data) => {
 		.attr("class", "x-axis")
 		.call(xAxisCall) // Wywołujemy oś x
 		.attr("transform", "translate(0, " + height + ")") //W przypadku osi x konieczne jest ustawienie przesunięcia od góry
-		.attr("y", "10")
 		.selectAll("text") // Wybór etykiet wykresu
 			.attr("text-anchor", "end") // Zakotwiczenie etykiet  na końcu tekstu
-			.attr("x", "-5") // Odsunięcie etykiet od punktu zakotwiczenia
+			.attr("x", "-5") // Odsunięcie etykiet od punktu zakotwiczenia x
+			.attr("y", "10") // Odsunięcie etykiet od punktu zakotwiczenia y
 			.attr("transform", "rotate(-40)"); //Obrót etykiet
 
 	//Definicja osi y
