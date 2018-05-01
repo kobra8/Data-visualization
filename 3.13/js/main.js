@@ -67,5 +67,5 @@ d3.json("data/revenues.json").then( data => {
       .attr("fill","green");
 })
 
-.catch(errror => console.log(errror));
+.catch(error => console.log(error));
 
