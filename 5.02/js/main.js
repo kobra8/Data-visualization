@@ -6,6 +6,9 @@ var height = 400 - margin.top - margin.bottom;
 
 var flag = true;
 
+//Transision definition
+var t = d3.transition().duration(2500);
+
 var svg = d3.select("#chart-area")
   .append("svg")
   .attr("width", width + margin.left + margin.right)
@@ -59,7 +62,10 @@ d3.json("data/revenues.json").then(data => {
   console.log(data);
 
   d3.interval(() => {
-    this.update(data);
+    //Simulate changing data elments length
+    var newData = flag ? data : data.slice(1);
+
+    this.update(newData);
     flag = !flag;
   }, 3000);
   //Run first time
@@ -77,34 +83,47 @@ function update(data) {
   y.domain([0, d3.max(data, d => d[value])]);
   //X axis
   var xAxisCall = d3.axisBottom(x);
-  this.xAxisGroup.call(xAxisCall);
+  this.xAxisGroup.transition(t).call(xAxisCall);
   //Y axis
   var yAxisCall = d3.axisLeft(y)
     .tickFormat(d => `$ ${d}`);
-  this.yAxisGroup.call(yAxisCall);
+  this.yAxisGroup.transition(t).call(yAxisCall);
 
   //Join new data with old elements.
   var rects = g.selectAll("rect")
-    .data(data);
+    .data(data, (d)=> d.month);
 
   //Exit old elements not present on new data
-  rects.exit().remove();
+  rects.exit()
+    .attr("fill", "red")
+    .transition(t)
+    .attr("y", y(0)) //Zerowanie wartości do animacji exit
+    .attr("height", 0) //Zerowanie wartości do animacji exit
+    .remove();
 
   //Update old elements present in new data
-  rects
+  rects.transition(t)
     .attr("x", d => x(d.month))
     .attr("y", d => y(d[value]))
     .attr("width", x.bandwidth)
     .attr("height", d => height - y(d[value]));
 
+    //Enter new elements present in new data
   rects.enter()
     .append("rect")
-    .attr("x", d => x(d.month))
-    .attr("y", d => y(d[value]))
-    .attr("width", x.bandwidth)
-    .attr("height", d => height - y(d[value]))
-    .attr("fill", "green");
+      .attr("fill", "green")
+      .attr("x", d => x(d.month))
+      .attr("width", x.bandwidth)
+      .attr("y", y(0)) // Wartość początkowa do animacji
+      .attr("height", 0) // Wartość początkowa do animacji
+      //and Update old element present in new data
+      .merge(rects)
+      .transition(t)
+        .attr("x", d => x(d.month))
+        .attr("width", x.bandwidth)
+        .attr("y", d => y(d[value]))
+        .attr("height", d => height - y(d[value]));
 
-    var label = flag ? "Revenue" : "Profit";
-    this.yLabel.text(label);
+  var label = flag ? "Revenue" : "Profit";
+  this.yLabel.text(label);
 }
