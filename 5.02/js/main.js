@@ -102,22 +102,26 @@ function update(data) {
     .remove();
 
   //Update old elements present in new data
-  rects.transition(t)
-    .attr("x", d => x(d.month))
-    .attr("y", d => y(d[value]))
-    .attr("width", x.bandwidth)
-    .attr("height", d => height - y(d[value]));
+  // rects.transition(t)
+  //   .attr("x", d => x(d.month))
+  //   .attr("y", d => y(d[value]))
+  //   .attr("width", x.bandwidth)
+  //   .attr("height", d => height - y(d[value]));
+  // Powyższy kod został przeniesiony do fukcji merge(), która wykonuje go
+  // when enter and update selection
 
     //Enter new elements present in new data
   rects.enter()
     .append("rect")
       .attr("fill", "green")
-      .attr("x", d => x(d.month))
+      .attr("x", d => x(d.month)) 
       .attr("width", x.bandwidth)
       .attr("y", y(0)) // Wartość początkowa do animacji
       .attr("height", 0) // Wartość początkowa do animacji
-      //and Update old element present in new data
-      .merge(rects)
+      //Update old element present in new data
+      //To co jest przed merge wykonuje się when enter selection
+      .merge(rects) // selection: rects
+       //To co jest przed merge wykonuje się when enter and update selection
       .transition(t)
         .attr("x", d => x(d.month))
         .attr("width", x.bandwidth)
