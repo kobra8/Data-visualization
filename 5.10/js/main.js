@@ -15,13 +15,6 @@ var svg = d3.select("#chart-area")
 var g = svg.append("g")
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-//Osie
-var xAxisGroup = g.append("g")
-	.attr("class", "x-axis")
-	.attr("transform", "translate(0, " + height + ")");
-var yAxisGroup = g.append("g")
-	.attr("class", "y-axis");
-
 //Etykiety
 var xLabel = g.append("text")
 	.attr("class", "x axis-label")
@@ -40,33 +33,61 @@ var yLabel = g.append("text")
 	.attr("transform", "rotate(-90)")
 	.text("Life expentancy (years)");
 
+//Scale
+var x = d3.scaleLog()
+	.domain([300, 150000])
+	.range([0, width])
+	.base(10);
 
-//Domena
-
-var x
-
-var y
+var y = d3.scaleLinear()
+	.domain([0, 90])
+	.range([height, 0]);
 
 // Obróbka danych
 
 d3.json("data/data.json").then((data) => {
 	console.log(data);
-
+	var newData = data[200].countries.filter(x => x.income !== null);
+	console.log(newData)
 	//Interval
-	//data.forEach((x, i) => {
-	var count = 0;
-	d3.interval(() => {
-		console.log(data[count].year) //(x[i].year)
-		count++
-	}, 2000);
+	// var count = 0;
+	// d3.interval(() => {
+	// 	console.log(data[count].year) //(x[i].year)
+	// 	count++
+	// }, 2000);
 
-	//	});
+
+
+	//Osie
+	var xAxisCall = d3.axisBottom(x)
+		.tickValues([400, 4000, 40000])
+		.tickFormat(d => `$ ${d}`)
+	g.append("g")
+		.attr("class", "x-axis")
+		.attr("transform", "translate(0, " + height + ")")
+		.call(xAxisCall);
+
+	var yAxisCall = (d3.axisLeft(y))
+	g.append("g")
+		.attr("class", "y-axis")
+		.call(yAxisCall);
+
+	this.update(...data[200].countries);
+
 })
 	.catch(error => console.log(error));
 
 // Update data function
 function update(data) {
-	var xAxisCall = d3.axisBottom(x)
+	console.log(data)
+	var bubbles = g.selectAll("circle")
+		.data(data);
+	bubbles.enter()
+		.append("circle")
+			.attr("cx", x(d => d.income))
+			.attr("cy", y(d => d.life_exp))
+			.attr("r", 10)
+			.attr("fill", "orange")
 
 
 
