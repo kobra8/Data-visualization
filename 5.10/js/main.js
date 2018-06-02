@@ -1,7 +1,7 @@
 /* Project 2 - Gapminder Clone */
 
 // Obszar wykresu
-var margin = { left: 80, right: 20, top: 70, bottom: 60 };
+var margin = { left: 80, right: 20, top: 50, bottom: 100 };
 var width = 800 - margin.left - margin.right;
 var height = 500 - margin.top - margin.bottom;
 
@@ -43,20 +43,27 @@ var y = d3.scaleLinear()
 	.domain([0, 90])
 	.range([height, 0]);
 
+var area = d3.scaleLinear()
+.domain([2000 ,1400000000])
+.range([25*Math.PI, 1500*Math.PI]);
+
+var color = d3.scaleOrdinal(d3.schemePastel2)
+
 // Obróbka danych
 
 d3.json("data/data.json").then((data) => {
 	console.log(data);
-	var newData = data[200].countries.filter(x => x.income !== null);
-	console.log(newData)
+	var dataFiltered = data[128].countries.filter(x => {
+		return x.income !== null && x.life_exp !== null && x.population !== null
+		}
+	);
+	console.log("Filtered: ", dataFiltered)
 	//Interval
 	// var count = 0;
 	// d3.interval(() => {
 	// 	console.log(data[count].year) //(x[i].year)
 	// 	count++
 	// }, 2000);
-
-
 
 	//Osie
 	var xAxisCall = d3.axisBottom(x)
@@ -72,22 +79,21 @@ d3.json("data/data.json").then((data) => {
 		.attr("class", "y-axis")
 		.call(yAxisCall);
 
-	this.update(...data[200].countries);
+	this.update(dataFiltered);
 
 })
 	.catch(error => console.log(error));
 
 // Update data function
 function update(data) {
-	console.log(data)
 	var bubbles = g.selectAll("circle")
 		.data(data);
 	bubbles.enter()
 		.append("circle")
-			.attr("cx", x(d => d.income))
-			.attr("cy", y(d => d.life_exp))
-			.attr("r", 10)
-			.attr("fill", "orange")
+		.attr("cx", d => x(d.income))
+		.attr("cy", d => y(d.life_exp))
+		.attr("r", d => Math.sqrt(area(d.population) / Math.PI))
+		.attr("fill", d => color(d.continent))
 
 
 
